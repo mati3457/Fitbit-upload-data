@@ -1,2 +1,2 @@
 # Fitbit-upload-data
-Uploads accelerometer and hearth rate data to server
+Uploads accelerometer and heart rate data to server
