@@ -1,0 +1,5 @@
+<svg>
+  <rect id="background" />
+  <text id="timeBig" x="10%" y="45%" class="acc-value">0</text>
+  <text id="timeSmall" x="50%" y="45%" class="acc-value">0</text>
+</svg>
