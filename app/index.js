@@ -1,8 +1,23 @@
-let document = require("document");
+import document from "document";
 import { HeartRateSensor } from "heart-rate";
 import { Accelerometer } from "accelerometer";
 import { outbox } from "file-transfer"
 import * as fs from "fs";
+
+const fileName = "/private/data/ascii.txt";
+// data on screen
+
+const appStatusText = document.getElementById("appStatusLabel");
+appStatusText.text = "ON";
+
+const timeLabel = document.getElementById("timeLabel");
+
+const updateClock = (h, m, s) => {
+  h = addTimeZone(h);
+  s = Math.floor(s).toString();
+  s = (s < 10) ? "0" + s : s;
+  timeLabel.text = h + ":" + m + ":" + s;
+}
 
 // import { memory } from "system";
 
@@ -14,21 +29,22 @@ import { display } from "display";
 // app doesnt time out after period of inactivity
 me.appTimeoutEnabled = false;
 
-const timeZone = 2; // set time zone value
+
+
+const timeZone = 1; // set time zone value
 
 // pokazywanie czasu
 const round2decimals = (num) => {
   return Math.round(num * 100) / 100;
 }
 
+
+
 const addTimeZone = (hour) => {
-  if(hour == "22") {
+  if(hour == "23") {
       return "00";
   }
-  if(hour == "23") {
-    return "01";
-  }
-  return (Number(hour) + 2).toString();
+  return (Number(hour) + timeZone).toString();
 }
 
 let timeString = "";
@@ -37,15 +53,15 @@ let accelString = "";
 display.autoOff = false;
 display.brightnessOverride = "dim";
 
-if (fs.existsSync("/private/data/ascii.txt")) {
+if (fs.existsSync(fileName)) {
   console.log("file exists!");
   if(fs.readFileSync("ascii.txt", "ascii") == "") {
     console.log("File contains something -- removing file...");
-    fs.unlinkSync("/private/data/ascii.txt");
-    fs.writeFileSync("/private/data/ascii.txt", "", "ascii");
+    fs.unlinkSync(fileName);
+    fs.writeFileSync(fileName, "", "ascii");
   }
 } else {
-  fs.writeFileSync("/private/data/ascii.txt", "", "ascii");
+  fs.writeFileSync(fileName, "", "ascii");
 }
 
 if(HeartRateSensor) {
@@ -64,19 +80,21 @@ clock.ontick = (evt) => {
   let [hour, minute, second] = evt.date.toTimeString().split(':')
   accelString = round2decimals(accel.x) + "," + round2decimals(accel.y) + "," + round2decimals(accel.z);
   timeString += addTimeZone(hour) + ":" + minute + ":" + Math.floor(second) + "," + ((hrm.heartRate == null) ? "00" : hrm.heartRate) + "," + accelString + "\n";
+
   // console.log("JS memory: " + memory.js.used + "/" + memory.js.total);
-  if(minute % 10 == 0 && second == 0) {
-    console.log("time for sending");
-    fs.writeFileSync("/private/data/ascii.txt", timeString, "ascii");
+  updateClock(hour, minute, second);
+
+  if(minute % 5 == 0 && second == 0) {
+    fs.writeFileSync(fileName, timeString, "ascii");
     timeString = "";
     outbox
-    .enqueueFile("/private/data/ascii.txt")
+    .enqueueFile(fileName)
     .then(ft => {
       console.log(`Transfer of ${ft.name} successfully queued.`);
-      fs.unlinkSync("/private/data/ascii.txt");
-      if(fs.existsSync("/private/data/ascii.txt")) {
-        console.log("Plik istnieje")
-      }
+      fs.unlinkSync(fileName);
+      // if(fs.existsSync("/private/data/ascii.txt")) {
+      //   console.log("Plik istnieje")
+      // }
     })
     .catch(err => {
       console.log(`Failed to schedule transfer: ${err}`);

@@ -1,5 +1,5 @@
 <svg>
   <rect id="background" />
-  <text id="timeBig" x="10%" y="45%" class="acc-value">0</text>
-  <text id="timeSmall" x="50%" y="45%" class="acc-value">0</text>
+  <text id="appStatusLabel" x="10%" y="15%" class="statusLabel">OFF</text>
+  <text id="timeLabel" x="10%" y="45%" class="timeLabel">00:00:00</text>
 </svg>

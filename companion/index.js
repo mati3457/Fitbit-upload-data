@@ -1,15 +1,13 @@
 import { inbox } from "file-transfer";
 import * as fs from "fs";
 
-let srcImage = "https://placekitten.com/336/336";
-let destFilename = "kitten.jpg";
-
-let srcStorage = "http://192.168.1.7/file-storage-local/index.php";
-
+let srcStorage = "http://192.168.1.19/file-storage-local/index.php";
+console.log("im here");
 let queueFiles = [];
 
 const upload = (fileContents, fileName) => {
   // console.log(fileName);
+  let flag = true;
   let newFile = new File([fileContents], fileName);
   const formData = new FormData();
   formData.append('file', newFile);
@@ -21,14 +19,15 @@ const upload = (fileContents, fileName) => {
   .then(
     success => { // Handle the success response object
       console.log("Succ" + success)
-      return true;
+      flag = true;
      } 
   ).catch(
     error => { // Handle the error response object
       console.log("Err" + error)
-      return false;
+      flag = false;
     }
   );
+  return flag;
 };
 
 const now = () => {
@@ -47,6 +46,7 @@ async function processAllFiles() {
       let timeNow = new Date()
       let fileName = now();
       let status = upload(payload, fileName);
+      
       if (!status) {
         if (queueFiles.length > 10) queueFiles.shift();
         queueFiles.push([payload, fileName]);
