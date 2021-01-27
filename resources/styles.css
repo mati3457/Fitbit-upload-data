@@ -13,8 +13,8 @@
 
 .timeLabel {
   font-family: Seville-Book;
-  font-size: 40;
-  fill: #F80070;
+  font-size: 60;
+  fill: #b4afb1;
   text-length: 32;
 }
 
@@ -22,5 +22,16 @@
   font-family: Seville-Book;
   font-size: 60;
   fill: #478542;
+  text-length: 32;
+}
+
+#myButton #text {
+  text-buffer: "BUTTON";
+}
+
+.errorLabel{
+  font-family: Seville-Book;
+  font-size: 32;
+  fill: #8d0b0b;
   text-length: 32;
 }
